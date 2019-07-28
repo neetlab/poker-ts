@@ -69,7 +69,7 @@ const makeIsNOfAKind = (n: number, pair = 1): HandChecker => (
 const isFiveOfAKind = makeIsNOfAKind(5);
 const isFourOfAKind = makeIsNOfAKind(4);
 const isThreeOfAKind = makeIsNOfAKind(3);
-const isTwoPair = makeIsNOfAKind(2, 2); // same as "2 of a kind"
+const isTwoPair = makeIsNOfAKind(2, 2); // same as "2 of a kind" *2
 const isOnePair = makeIsNOfAKind(2); // same as "2 of a kind"
 
 const isRoyalStraightFlush: HandChecker = (cards, hasWildCard) =>
