@@ -32,7 +32,7 @@ const groupCardsByRank = (cards: StandardCard[]) =>
  */
 const chunkCardsByRankPriority = (cards: StandardCard[]) =>
   Object.entries(groupCardsByRank(cards))
-    .sort(([_1, a], [_2, b]) => b.length - a.length)
+    .sort(([_, a], [__, b]) => b.length - a.length)
     .map(([_, cards]) => cards);
 
 /**
@@ -47,15 +47,21 @@ const makeIsNOfAKind = (n: number, pair = 1): HandChecker => (
 ) => {
   const [priorityGroup, ...rest] = chunkCardsByRankPriority(cards);
 
-  if (pair > 1) {
-    return makeIsNOfAKind(n, pair - 1)(
-      flatten(rest),
-      hasWildCard && priorityGroup.length !== n
-    );
+  if (priorityGroup.length === n) {
+    if (pair > 1) {
+      return makeIsNOfAKind(n, pair - 1)(flatten(rest));
+    }
+
+    return true;
   }
 
-  if (priorityGroup.length === n) return true;
-  if (hasWildCard && priorityGroup.length + 1 === n) return true;
+  if (hasWildCard && priorityGroup.length + 1 === n) {
+    if (pair > 1) {
+      return makeIsNOfAKind(n, pair - 1)(flatten(rest), true);
+    }
+
+    return true;
+  }
 
   return false;
 };
@@ -86,11 +92,8 @@ const isStraight: HandChecker = (cards, hasWildCard) => {
   // like this: 9, 10, 11, 12, 13
   const [x, ...xs] = cards.map(prevOf).sort(order);
 
-  if (xs[0].rank - x.rank === 1) {
-    if (xs.length <= 1) return true;
-    return isStraight(xs, hasWildCard);
-  }
-
+  if (!xs.length) return true;
+  if (xs[0].rank - x.rank === 1) return isStraight(xs, hasWildCard);
   return false;
 };
 
